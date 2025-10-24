@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div data-name="clients">
+    <div class="flex justify-between items-center mb-6">
+        <h1>Clientes</h1>
+        <button onclick="toggleForm('clientForm')" class="btn btn-primary">
+            <span class="flex items-center gap-2">
+                <div class="icon-plus text-lg"></div>
+                Nuevo Cliente
+            </span>
+        </button>
+    </div>
+
+    <!-- Formulario para crear/editar cliente -->
+    <div id="clientForm" class="card mb-6" style="display: none;">
+        <h3 class="mb-4">Nuevo Cliente</h3>
+        <form method="post" action="{% url 'crear_cliente' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="nombre" class="input-field" required>
+                    </div>
+                    <div class="form-group">
+                        <label>NIT</label>
+                        <input type="text" name="nit" class="input-field" placeholder="12345-6" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" name="usuario" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label>Clave</label>
+                    <input type="password" name="clave" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" name="direccion" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico</label>
+                    <input type="email" name="correo_electronico" class="input-field" required>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" onclick="toggleForm('clientForm')" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid gap-4">
+        {% for cliente in clientes %}
+        <div class="card">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h3 class="mb-2">{{ cliente.nombre }}</h3>
+                    <div class="text-sm text-[var(--text-secondary)] space-y-1">
+                        <p><strong>NIT:</strong> {{ cliente.nit }}</p>
+                        <p><strong>Usuario:</strong> {{ cliente.usuario }}</p>
+                        <p><strong>Dirección:</strong> {{ cliente.direccion }}</p>
+                        <p><strong>Email:</strong> {{ cliente.correo_electronico }}</p>
+                    </div>
+
+                    {% if cliente.instancias %}
+                    <div class="mt-4">
+                        <h4 class="text-sm font-semibold mb-2">Instancias:</h4>
+                        <div class="space-y-2">
+                            {% for instancia in cliente.instancias %}
+                            <div class="bg-gray-50 p-2 rounded">
+                                <p class="font-medium">{{ instancia.nombre }}</p>
+                                <span class="badge {% if instancia.estado == 'Vigente' %}badge-success{% else %}badge-warning{% endif %}">
+                                    {{ instancia.estado }}
+                                </span>
+                                <p class="text-sm text-[var(--text-secondary)]">Desde: {{ instancia.fecha_inicio }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="flex gap-2">
+                    <form method="post" action="{% url 'eliminar_cliente' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="cliente_nit" value="{{ cliente.nit }}">
+                        <button type="submit" onclick="return confirmDelete('¿Está seguro de eliminar este cliente y todas sus instancias?')" class="btn btn-danger">
+                            <div class="icon-trash text-lg"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card text-center py-8">
+            <div class="icon-users text-4xl text-[var(--text-secondary)] mb-2 mx-auto w-fit"></div>
+            <p class="text-[var(--text-secondary)]">No hay clientes registrados</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

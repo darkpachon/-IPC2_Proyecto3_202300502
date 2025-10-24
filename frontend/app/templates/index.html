@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div data-name="dashboard">
+    <h1 class="mb-6">Panel Principal</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)] mb-1">Clientes Registrados</p>
+                    <p class="text-2xl font-bold">{{ stats.total_clients }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <div class="icon-users text-xl text-blue-600"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)] mb-1">Instancias Activas</p>
+                    <p class="text-2xl font-bold">{{ stats.active_instances }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
+                    <div class="icon-server text-xl text-green-600"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)] mb-1">Categorías</p>
+                    <p class="text-2xl font-bold">{{ stats.total_categories }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                    <div class="icon-folder text-xl text-purple-600"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[var(--text-secondary)] mb-1">Ingresos Mensuales</p>
+                    <p class="text-2xl font-bold">${{ stats.monthly_revenue|floatformat:2 }}</p>
+                </div>
+                <div class="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
+                    <div class="icon-dollar-sign text-xl text-orange-600"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card">
+            <h3 class="mb-4">Resumen del Sistema</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span>Total de Recursos:</span>
+                    <span class="font-semibold">{{ stats.total_resources }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Configuraciones:</span>
+                    <span class="font-semibold">{{ stats.total_configurations }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Facturas Generadas:</span>
+                    <span class="font-semibold">{{ stats.total_invoices }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Consumos Registrados:</span>
+                    <span class="font-semibold">{{ stats.total_consumptions }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="mb-4">Acciones Rápidas</h3>
+            <div class="space-y-3">
+                <a href="{% url 'configuracion' %}" class="w-full btn btn-primary flex items-center gap-2 justify-center">
+                    <div class="icon-upload text-lg"></div>
+                    Cargar Configuración XML
+                </a>
+                <a href="{% url 'consumo' %}" class="w-full btn btn-secondary flex items-center gap-2 justify-center">
+                    <div class="icon-activity text-lg"></div>
+                    Registrar Consumos
+                </a>
+                <a href="{% url 'facturacion' %}" class="w-full btn btn-success flex items-center gap-2 justify-center">
+                    <div class="icon-file-text text-lg"></div>
+                    Generar Facturación
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

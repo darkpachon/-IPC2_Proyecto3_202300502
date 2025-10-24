@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tecnologías Chapinas - Sistema de Facturación Cloud</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://resource.trickle.so/vendor_lib/unpkg/lucide-static@0.516.0/font/lucide.css" rel="stylesheet">
+
+    <style type="text/tailwindcss">
+    @layer theme {
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --accent-color: #60a5fa;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+    }
+
+    @layer base {
+        body {
+            @apply bg-[var(--bg-secondary)] text-[var(--text-primary)] font-sans;
+        }
+        
+        h1 {
+            @apply text-3xl font-bold text-[var(--text-primary)];
+        }
+        
+        h2 {
+            @apply text-2xl font-semibold text-[var(--text-primary)];
+        }
+        
+        h3 {
+            @apply text-xl font-semibold text-[var(--text-primary)];
+        }
+    }
+
+    @layer components {
+        .btn {
+            @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+        }
+        
+        .btn-primary {
+            @apply bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)];
+        }
+        
+        .btn-secondary {
+            @apply bg-[var(--bg-primary)] text-[var(--text-primary)] border border-[var(--border-color)] hover:bg-gray-50;
+        }
+        
+        .btn-success {
+            @apply bg-[var(--success-color)] text-white hover:bg-green-600;
+        }
+        
+        .btn-danger {
+            @apply bg-[var(--danger-color)] text-white hover:bg-red-600;
+        }
+        
+        .card {
+            @apply bg-[var(--bg-primary)] rounded-lg shadow-sm border border-[var(--border-color)] p-6;
+        }
+        
+        .input-field {
+            @apply w-full px-4 py-2 border border-[var(--border-color)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent;
+        }
+        
+        .badge {
+            @apply px-3 py-1 rounded-full text-sm font-medium;
+        }
+        
+        .badge-success {
+            @apply bg-green-100 text-green-700;
+        }
+        
+        .badge-warning {
+            @apply bg-yellow-100 text-yellow-700;
+        }
+        
+        .badge-danger {
+            @apply bg-red-100 text-red-700;
+        }
+        
+        .badge-info {
+            @apply bg-blue-100 text-blue-700;
+        }
+
+        .form-group {
+            @apply mb-4;
+        }
+
+        .form-group label {
+            @apply block text-sm font-medium mb-2;
+        }
+
+        .alert {
+            @apply fixed top-4 right-4 z-50 animate-slide-in;
+        }
+
+        .alert-success {
+            @apply bg-green-50 border-green-200 text-green-800;
+        }
+
+        .alert-error {
+            @apply bg-red-50 border-red-200 text-red-800;
+        }
+
+        .alert-warning {
+            @apply bg-yellow-50 border-yellow-200 text-yellow-800;
+        }
+
+        .alert-info {
+            @apply bg-blue-50 border-blue-200 text-blue-800;
+        }
+    }
+
+    @layer utilities {
+        .shadow-soft {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[var(--bg-primary)] border-r border-[var(--border-color)] p-6">
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-[var(--primary-color)]">Tecnologías Chapinas</h2>
+                <p class="text-sm text-[var(--text-secondary)] mt-1">Sistema de Facturación</p>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="{% url 'index' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'index' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-layout-dashboard text-xl"></div>
+                    <span class="font-medium">Panel Principal</span>
+                </a>
+                <a href="{% url 'categorias' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'categorias' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-folder text-xl"></div>
+                    <span class="font-medium">Categorías</span>
+                </a>
+                <a href="{% url 'configuraciones' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'configuraciones' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-settings text-xl"></div>
+                    <span class="font-medium">Configuraciones</span>
+                </a>
+                <a href="{% url 'recursos' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'recursos' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-cpu text-xl"></div>
+                    <span class="font-medium">Recursos</span>
+                </a>
+                <a href="{% url 'clientes' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'clientes' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-users text-xl"></div>
+                    <span class="font-medium">Clientes</span>
+                </a>
+                <a href="{% url 'instancias' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'instancias' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-server text-xl"></div>
+                    <span class="font-medium">Instancias</span>
+                </a>
+                <a href="{% url 'configuracion' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'configuracion' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-upload text-xl"></div>
+                    <span class="font-medium">Cargar XML</span>
+                </a>
+                <a href="{% url 'consumo' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'consumo' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-activity text-xl"></div>
+                    <span class="font-medium">Registrar Consumo</span>
+                </a>
+                <a href="{% url 'facturacion' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'facturacion' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-file-text text-xl"></div>
+                    <span class="font-medium">Facturación</span>
+                </a>
+                <a href="{% url 'reportes' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'reportes' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-bar-chart text-xl"></div>
+                    <span class="font-medium">Reportes</span>
+                </a>
+                <a href="{% url 'inicializar' %}" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all {% if request.resolver_match.url_name == 'inicializar' %}bg-[var(--primary-color)] text-white{% else %}text-[var(--text-secondary)] hover:bg-gray-100{% endif %}">
+                    <div class="icon-refresh-cw text-xl"></div>
+                    <span class="font-medium">Inicializar Sistema</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <header class="bg-[var(--bg-primary)] border-b border-[var(--border-color)] px-8 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-[var(--text-secondary)]">{{ current_date }}</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-[var(--secondary-color)] flex items-center justify-center">
+                            <div class="icon-user text-xl text-white"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main content -->
+            <main class="flex-1 p-8 overflow-y-auto">
+                {% block content %}
+                {% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert">
+                <div class="flex items-center gap-3 px-6 py-4 rounded-lg border shadow-lg max-w-md 
+                    {% if message.tags == 'success' %}alert-success
+                    {% elif message.tags == 'error' %}alert-error
+                    {% elif message.tags == 'warning' %}alert-warning
+                    {% else %}alert-info{% endif %}">
+                    <div class="icon-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}alert-circle{% elif message.tags == 'warning' %}alert-triangle{% else %}info{% endif %} text-xl"></div>
+                    <p class="flex-1 font-medium">{{ message }}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" class="hover:opacity-70 transition-opacity">
+                        <div class="icon-x text-lg"></div>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <script>
+        // Cerrar alertas automáticamente después de 4 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => alert.remove());
+            }, 4000);
+        });
+
+        // Función para mostrar formularios
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
+        // Función para confirmar eliminación
+        function confirmDelete(message) {
+            return confirm(message || '¿Está seguro de eliminar este elemento?');
+        }
+    </script>
+
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>
