@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🧾 Generar Facturación</h2>
+    
+    {% if mensaje %}
+        <div class="alert alert-{{ tipo }}">
+            {{ mensaje }}
+            {% if facturas_generadas %}
+                <div style="margin-top: 1rem;">
+                    <strong>Facturas generadas:</strong> {{ facturas_generadas }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="fecha_inicio">Fecha de inicio:</label>
+            <input type="text" name="fecha_inicio" placeholder="dd/mm/yyyy" required 
+                   value="{% now 'd/m/Y' %}">
+        </div>
+        <div class="form-group">
+            <label for="fecha_fin">Fecha de fin:</label>
+            <input type="text" name="fecha_fin" placeholder="dd/mm/yyyy" required
+                   value="{% now 'd/m/Y' %}">
+        </div>
+        <button type="submit" class="btn">Generar Facturas</button>
+    </form>
+
+    {% if facturas %}
+    <div style="margin-top: 2rem;">
+        <h3>Facturas Generadas</h3>
+        {% for factura in facturas %}
+        <div style="border: 1px solid #ddd; padding: 1rem; margin: 1rem 0; border-radius: 4px;">
+            <h4>Factura #{{ factura.numero_factura }}</h4>
+            <p><strong>Cliente NIT:</strong> {{ factura.nit_cliente }}</p>
+            <p><strong>Fecha:</strong> {{ factura.fecha }}</p>
+            <p><strong>Monto Total:</strong> Q{{ factura.monto_total|floatformat:2 }}</p>
+            
+            <h5>Detalles:</h5>
+            {% for detalle in factura.detalles %}
+            <div style="margin-left: 1rem; padding: 0.5rem; background: #f8f9fa;">
+                <p><strong>Instancia:</strong> {{ detalle.nombre_instancia }} (ID: {{ detalle.id_instancia }})</p>
+                <p><strong>Tiempo consumido:</strong> {{ detalle.tiempo_consumido }} horas</p>
+                <p><strong>Monto instancia:</strong> Q{{ detalle.monto_instancia|floatformat:2 }}</p>
+                
+                <h6>Desglose por recursos:</h6>
+                <ul>
+                {% for recurso in detalle.detalles_recursos %}
+                    <li>{{ recurso.nombre_recurso }}: {{ recurso.cantidad }} x Q{{ recurso.valor_x_hora|floatformat:2 }} x {{ detalle.tiempo_consumido }}h = Q{{ recurso.costo|floatformat:2 }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h3>📊 Consumos No Facturados</h3>
+    <button type="button" class="btn" onclick="cargarConsumosNoFacturados()">
+        Cargar Consumos No Facturados
+    </button>
+    <div id="consumos-container" style="margin-top: 1rem;"></div>
+</div>
+
+<script>
+function cargarConsumosNoFacturados() {
+    fetch('http://localhost:5000/api/datos')
+        .then(response => response.json())
+        .then(data => {
+            const consumosNoFacturados = data.consumos.filter(c => !c.facturado);
+            const container = document.getElementById('consumos-container');
+            
+            if (consumosNoFacturados.length === 0) {
+                container.innerHTML = '<p>No hay consumos pendientes de facturar.</p>';
+                return;
+            }
+            
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr><th style="border: 1px solid #ddd; padding: 8px;">NIT Cliente</th><th style="border: 1px solid #ddd; padding: 8px;">ID Instancia</th><th style="border: 1px solid #ddd; padding: 8px;">Tiempo (h)</th><th style="border: 1px solid #ddd; padding: 8px;">Fecha/Hora</th></tr>';
+            
+            consumosNoFacturados.forEach(consumo => {
+                html += `<tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${consumo.nit_cliente}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${consumo.id_instancia}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${consumo.tiempo}</td>
+                    <td style="border: 1px solid #ddd; padding: 8px;">${consumo.fechahora}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            container.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('consumos-container').innerHTML = '<p>Error al cargar consumos.</p>';
+        });
+}
+</script>
+{% endblock %}

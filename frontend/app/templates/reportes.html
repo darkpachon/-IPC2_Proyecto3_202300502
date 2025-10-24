@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 Generar Reportes PDF</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <!-- Reporte de Detalle de Factura -->
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+            <h3>🧾 Detalle de Factura</h3>
+            <p>Genera un reporte detallado de una factura específica.</p>
+            
+            <form id="formDetalleFactura" onsubmit="generarDetalleFactura(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="numero_factura">Número de Factura:</label>
+                    <select name="numero_factura" id="numero_factura" required>
+                        <option value="">Seleccione una factura</option>
+                        <!-- Las opciones se cargarán con JavaScript -->
+                    </select>
+                </div>
+                <button type="submit" class="btn">Generar Reporte PDF</button>
+            </form>
+        </div>
+        
+        <!-- Reporte de Análisis de Ventas -->
+        <div style="border: 1px solid #ddd; padding: 1.5rem; border-radius: 8px;">
+            <h3>📈 Análisis de Ventas</h3>
+            <p>Analiza los ingresos por categorías o recursos en un período.</p>
+            
+            <form id="formAnalisisVentas" onsubmit="generarAnalisisVentas(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="tipo_analisis">Tipo de Análisis:</label>
+                    <select name="tipo_analisis" id="tipo_analisis" required>
+                        <option value="">Seleccione tipo</option>
+                        <option value="categorias">Categorías y Configuraciones</option>
+                        <option value="recursos">Recursos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_inicio_analisis">Fecha de inicio:</label>
+                    <input type="text" name="fecha_inicio" placeholder="dd/mm/yyyy" required 
+                           value="{% now 'd/m/Y' %}">
+                </div>
+                <div class="form-group">
+                    <label for="fecha_fin_analisis">Fecha de fin:</label>
+                    <input type="text" name="fecha_fin" placeholder="dd/mm/yyyy" required
+                           value="{% now 'd/m/Y' %}">
+                </div>
+                <button type="submit" class="btn">Generar Reporte PDF</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Cargar facturas disponibles al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    cargarFacturas();
+});
+
+function cargarFacturas() {
+    fetch('http://localhost:5000/api/facturas')
+        .then(response => response.json())
+        .then(facturas => {
+            const select = document.getElementById('numero_factura');
+            select.innerHTML = '<option value="">Seleccione una factura</option>';
+            
+            facturas.forEach(factura => {
+                const option = document.createElement('option');
+                option.value = factura.numero_factura;
+                option.textContent = `${factura.numero_factura} - ${factura.nit_cliente} - Q${factura.monto_total}`;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error cargando facturas:', error);
+        });
+}
+
+function generarDetalleFactura(event) {
+    event.preventDefault();
+    const form = event.target;
+    const numeroFactura = form.numero_factura.value;
+    
+    if (!numeroFactura) {
+        alert('Por favor seleccione una factura');
+        return;
+    }
+    
+    // Descargar el PDF
+    window.open(`http://localhost:5000/api/reportes/detalle-factura/${numeroFactura}`, '_blank');
+}
+
+function generarAnalisisVentas(event) {
+    event.preventDefault();
+    const form = event.target;
+    const tipoAnalisis = form.tipo_analisis.value;
+    const fechaInicio = form.fecha_inicio.value;
+    const fechaFin = form.fecha_fin.value;
+    
+    if (!tipoAnalisis) {
+        alert('Por favor seleccione el tipo de análisis');
+        return;
+    }
+    
+    // Enviar solicitud para generar el reporte
+    fetch('http://localhost:5000/api/reportes/analisis-ventas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            tipo_analisis: tipoAnalisis,
+            fecha_inicio: fechaInicio,
+            fecha_fin: fechaFin
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.blob();
+        } else {
+            return response.json().then(error => { throw new Error(error.error); });
+        }
+    })
+    .then(blob => {
+        // Crear URL para el blob y descargar
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = `analisis_ventas_${tipoAnalisis}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        alert('Error generando reporte: ' + error.message);
+    });
+}
+</script>
+
+<style>
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.btn {
+    background-color: #3498db;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+</style>
+{% endblock %}

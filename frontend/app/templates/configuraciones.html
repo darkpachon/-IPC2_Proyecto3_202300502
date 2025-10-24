@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div data-name="configurations">
+    <div class="flex justify-between items-center mb-6">
+        <h1>Configuraciones</h1>
+        <button onclick="toggleForm('configurationForm')" class="btn btn-primary">
+            <span class="flex items-center gap-2">
+                <div class="icon-plus text-lg"></div>
+                Nueva Configuración
+            </span>
+        </button>
+    </div>
+
+    <!-- Formulario para crear configuración -->
+    <div id="configurationForm" class="card mb-6" style="display: none;">
+        <h3 class="mb-4">Nueva Configuración</h3>
+        <form method="post" action="{% url 'crear_configuracion' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                <div class="form-group">
+                    <label>Nombre</label>
+                    <input type="text" name="nombre" class="input-field" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea name="descripcion" class="input-field" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select name="categoria_id" class="input-field" required>
+                        <option value="">Seleccione una categoría</option>
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Recursos</label>
+                    <div id="resourcesContainer" class="space-y-2">
+                        <!-- Los recursos se agregarán dinámicamente con JavaScript -->
+                    </div>
+                    <button type="button" onclick="addResourceField()" class="btn btn-secondary mt-2">
+                        <div class="icon-plus text-lg"></div>
+                        Agregar Recurso
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" onclick="toggleForm('configurationForm')" class="btn btn-secondary">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid gap-4">
+        {% for configuracion in configuraciones %}
+        <div class="card">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h3 class="mb-2">{{ configuracion.nombre }}</h3>
+                    <p class="text-[var(--text-secondary)] mb-2">{{ configuracion.descripcion }}</p>
+                    <span class="badge badge-info">Categoría: {{ configuracion.categoria_nombre }}</span>
+                    
+                    {% if configuracion.recursos %}
+                    <div class="mt-4">
+                        <h4 class="text-sm font-semibold mb-2">Recursos:</h4>
+                        <div class="space-y-2">
+                            {% for recurso_id, cantidad in configuracion.recursos.items %}
+                            <div class="bg-gray-50 p-2 rounded">
+                                <span class="font-medium">Recurso {{ recurso_id }}:</span>
+                                <span class="text-sm text-[var(--text-secondary)]">Cantidad: {{ cantidad }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="card text-center py-8">
+            <div class="icon-settings text-4xl text-[var(--text-secondary)] mb-2 mx-auto w-fit"></div>
+            <p class="text-[var(--text-secondary)]">No hay configuraciones registradas</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+let resourceCount = 0;
+
+function addResourceField() {
+    resourceCount++;
+    const container = document.getElementById('resourcesContainer');
+    const resourceField = document.createElement('div');
+    resourceField.className = 'flex gap-2 items-center';
+    resourceField.innerHTML = `
+        <select name="recurso_${resourceCount}_id" class="input-field flex-1" required>
+            <option value="">Seleccione un recurso</option>
+            {% for recurso in recursos %}
+            <option value="{{ recurso.id }}">{{ recurso.nombre }} ({{ recurso.metrica }})</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="recurso_${resourceCount}_cantidad" class="input-field w-32" step="0.1" placeholder="Cantidad" required>
+        <button type="button" onclick="this.parentElement.remove()" class="btn btn-danger">
+            <div class="icon-trash text-lg"></div>
+        </button>
+    `;
+    container.appendChild(resourceField);
+}
+
+// Agregar un campo de recurso inicial al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    addResourceField();
+});
+</script>
+{% endblock %}

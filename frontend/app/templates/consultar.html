@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div data-name="consultar">
+    <h1 class="mb-6">Consultar Datos</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recursos -->
+        <div class="card">
+            <h3 class="mb-4">Recursos</h3>
+            <div class="space-y-3">
+                {% for recurso in datos.recursos %}
+                <div class="border border-[var(--border-color)] rounded-lg p-3">
+                    <h4 class="font-semibold">{{ recurso.nombre }}</h4>
+                    <div class="flex gap-2 mt-2">
+                        <span class="badge badge-info">{{ recurso.metrica }}</span>
+                        <span class="badge badge-success">${{ recurso.valor_x_hora }}/hora</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Categorías -->
+        <div class="card">
+            <h3 class="mb-4">Categorías</h3>
+            <div class="space-y-3">
+                {% for categoria in datos.categorias %}
+                <div class="border border-[var(--border-color)] rounded-lg p-3">
+                    <h4 class="font-semibold">{{ categoria.nombre }}</h4>
+                    <p class="text-sm text-[var(--text-secondary)]">{{ categoria.descripcion }}</p>
+                    <span class="badge badge-info mt-2">{{ categoria.carga_trabajo }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Clientes -->
+        <div class="card">
+            <h3 class="mb-4">Clientes</h3>
+            <div class="space-y-3">
+                {% for cliente in datos.clientes %}
+                <div class="border border-[var(--border-color)] rounded-lg p-3">
+                    <h4 class="font-semibold">{{ cliente.nombre }}</h4>
+                    <p class="text-sm text-[var(--text-secondary)]">NIT: {{ cliente.nit }}</p>
+                    <p class="text-sm text-[var(--text-secondary)]">{{ cliente.correo_electronico }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Instancias -->
+        <div class="card">
+            <h3 class="mb-4">Instancias</h3>
+            <div class="space-y-3">
+                {% for cliente in datos.clientes %}
+                    {% for instancia in cliente.instancias %}
+                    <div class="border border-[var(--border-color)] rounded-lg p-3">
+                        <h4 class="font-semibold">{{ instancia.nombre }}</h4>
+                        <p class="text-sm text-[var(--text-secondary)]">Cliente: {{ cliente.nombre }}</p>
+                        <span class="badge {% if instancia.estado == 'Vigente' %}badge-success{% else %}badge-warning{% endif %}">
+                            {{ instancia.estado }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

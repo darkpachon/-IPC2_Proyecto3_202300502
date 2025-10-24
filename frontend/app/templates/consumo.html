@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>⏱️ Enviar Consumo</h2>
+    
+    {% if mensaje %}
+        <div class="alert alert-{{ tipo }}">
+            {{ mensaje }}
+            {% if consumos_procesados %}
+                <div style="margin-top: 1rem;">
+                    <strong>Consumos procesados:</strong> {{ consumos_procesados }}
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="archivo_xml">Seleccione archivo XML de consumo:</label>
+            <input type="file" name="archivo_xml" accept=".xml" required>
+        </div>
+        <button type="submit" class="btn">Enviar Consumo</button>
+    </form>
+    
+    <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+        <h3>📝 Formato esperado:</h3>
+        <pre>
+&lt;?xml version="1.0"?&gt;
+&lt;listadoConsumos&gt;
+  &lt;consumo nicClientes="12345-6" idInstancia="1"&gt;
+    &lt;tiempo&gt;10.5&lt;/tiempo&gt;
+    &lt;fechahora&gt;01/01/2025 10:00&lt;/fechahora&gt;
+  &lt;/consumo&gt;
+&lt;/listadoConsumos&gt;
+        </pre>
+    </div>
+</div>
+{% endblock %}
