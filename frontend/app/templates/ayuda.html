@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>📚 Ayuda</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <div>
+            <h3>👨‍🎓 Información del Estudiante</h3>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                <p><strong>Nombre:</strong> [Tu Nombre]</p>
+                <p><strong>Carnet:</strong> [Tu Carnet]</p>
+                <p><strong>Curso:</strong> Introducción a la Programación y Computación 2</p>
+                <p><strong>Proyecto:</strong> Sistema de Facturación - Tecnologías Chapinas, S.A.</p>
+            </div>
+        </div>
+        
+        <div>
+            <h3>📖 Documentación</h3>
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px;">
+                <p>Este sistema permite gestionar la facturación de servicios en la nube.</p>
+                <p><strong>Funcionalidades principales:</strong></p>
+                <ul>
+                    <li>Gestión de recursos, categorías y configuraciones</li>
+                    <li>Registro de clientes e instancias</li>
+                    <li>Procesamiento de consumos</li>
+                    <li>Generación de facturas</li>
+                    <li>Reportes en PDF</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

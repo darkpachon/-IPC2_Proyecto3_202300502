@@ -1,3 +1,12 @@
+from typing import List
+from .recurso import Recurso
+from .categoria import Categoria
+from .configuracion import Configuracion
+from .cliente import Cliente
+from .instancia import Instancia
+from .consumo import Consumo
+from .factura import Factura, DetalleFactura
+
 class Sistema:
     def __init__(self):
         self.recursos: List[Recurso] = []
@@ -7,6 +16,66 @@ class Sistema:
         self.facturas: List[Factura] = []
         self.proximo_id_factura = 1
         self.proximo_id_consumo = 1
+    
+    # MÉTODOS FALTANTES AGREGADOS
+    def agregar_recurso(self, recurso: Recurso):
+        """Agrega un recurso al sistema"""
+        self.recursos.append(recurso)
+    
+    def agregar_categoria(self, categoria: Categoria):
+        """Agrega una categoría al sistema"""
+        self.categorias.append(categoria)
+    
+    def agregar_cliente(self, cliente: Cliente):
+        """Agrega un cliente al sistema"""
+        self.clientes.append(cliente)
+    
+    def agregar_factura(self, factura: Factura):
+        """Agrega una factura al sistema"""
+        self.facturas.append(factura)
+    
+    def obtener_recurso_por_id(self, recurso_id: int):
+        """Obtiene un recurso por su ID"""
+        for recurso in self.recursos:
+            if recurso.id == recurso_id:
+                return recurso
+        return None
+    
+    def obtener_categoria_por_id(self, categoria_id: int):
+        """Obtiene una categoría por su ID"""
+        for categoria in self.categorias:
+            if categoria.id == categoria_id:
+                return categoria
+        return None
+    
+    def obtener_cliente_por_nit(self, nit: str):
+        """Obtiene un cliente por su NIT"""
+        for cliente in self.clientes:
+            if cliente.nit == nit:
+                return cliente
+        return None
+    
+    def obtener_configuracion_por_id(self, configuracion_id: int):
+        """Obtiene una configuración por su ID"""
+        for categoria in self.categorias:
+            for configuracion in categoria.configuraciones:
+                if configuracion.id == configuracion_id:
+                    return configuracion
+        return None
+    
+    def obtener_instancia_por_id(self, instancia_id: int):
+        """Obtiene una instancia por su ID"""
+        for cliente in self.clientes:
+            for instancia in cliente.instancias:
+                if instancia.id == instancia_id:
+                    return instancia
+        return None
+    
+    def generar_numero_factura(self):
+        """Genera un número de factura único"""
+        numero = f"FACT-{self.proximo_id_factura:06d}"
+        self.proximo_id_factura += 1
+        return numero
     
     def generar_id_consumo(self) -> int:
         """Genera un ID único para consumo"""
@@ -130,7 +199,6 @@ class Sistema:
         
         return None
 
-    # Actualizar el método to_dict para incluir el próximo_id_consumo
     def to_dict(self):
         """Convierte todo el sistema a diccionario para serialización"""
         return {

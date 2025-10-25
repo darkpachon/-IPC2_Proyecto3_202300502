@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <h2>🔄 Inicializar Sistema</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 1rem; border-radius: 4px; margin-bottom: 2rem;">
+        <h3 style="color: #856404;">⚠️ Advertencia</h3>
+        <p>Esta acción eliminará <strong>TODOS los datos</strong> del sistema incluyendo:</p>
+        <ul>
+            <li>Clientes e instancias</li>
+            <li>Recursos y categorías</li>
+            <li>Facturas y consumos</li>
+            <li>Configuraciones</li>
+        </ul>
+        <p><strong>Esta acción no se puede deshacer.</strong></p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de que desea inicializar el sistema? Se perderán todos los datos.')">
+            🔄 Inicializar Sistema
+        </button>
+    </form>
+</div>
+{% endblock %}
